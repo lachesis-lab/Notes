@@ -21,10 +21,7 @@ public class NoteFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
-    private static final String ARG_NOTE_ID = "notesFragment_note_id";
-
     // TODO: Rename and change types of parameters
-    private int mNoteId;
 
     public NoteFragment() {
         // Required empty public constructor
@@ -67,19 +64,12 @@ public class NoteFragment extends Fragment {
             requireActivity().finish();
             return;
         }
-        TextView textView = view.findViewById(R.id.note_text); //new TextView(getActivity());
+        TextView textView = view.findViewById(R.id.note_text);
         textView.setTextSize(28);
 
         textView.setText(NotesListFragment.mNotesList.get(MainActivity.mNoteId).getNoteText());
 
-//        textView.setText(texts[mNoteId]);
 
     }
-/*
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(MainActivity.ARG_NOTE_ID, mNoteId);
-    }
-*/
 
 }

@@ -3,14 +3,9 @@ package ru.lachesis.notes;
 import android.app.DatePickerDialog;
 
 import android.content.res.AssetManager;
-import android.content.res.Configuration;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +27,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,13 +38,9 @@ public class NotesListFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_NODE_ID = "ru.lachesis.notes.note_id";
-    public static List<Note> mNotesList = new ArrayList();
-    private final String mAssetPath = "Notes";
-    private LinearLayout mParentLayout;
+    public static List<Note> mNotesList = new ArrayList<>();
 
     // TODO: Rename and change types of parameters
-    private int mNoteId = -1;
 
     public NotesListFragment() {
         // Required empty public constructor
@@ -74,11 +66,12 @@ public class NotesListFragment extends Fragment {
 
     private ArrayList<Note> getNotes(String assetPath) {
         ArrayList<Note> notes = new ArrayList<>();
-        AssetManager manager = getActivity().getAssets();
         try {
+            AssetManager manager = Objects.requireNonNull(getActivity()).getAssets();
             String[] files = manager.list(assetPath);
             for (String file : files) {
                 String jsString = readJSONFromAsset(assetPath + "/" + file, manager);
+                if (jsString==null) continue;
                 JSONObject js = new JSONObject(jsString);
                 int noteId = js.getInt("noteId");
                 String noteName = js.getString("noteName");
@@ -95,7 +88,7 @@ public class NotesListFragment extends Fragment {
 
                 notes.add(new Note(noteId, noteName, noteDate, noteText));
             }
-        } catch (IOException | JSONException e) {
+        } catch (IOException | JSONException  e ) {
             e.printStackTrace();
         }
         return notes;
@@ -110,7 +103,7 @@ public class NotesListFragment extends Fragment {
             byte[] buffer = new byte[size];
             is.read(buffer);
             is.close();
-            json = new String(buffer, "UTF-8");
+            json = new String(buffer);
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -124,6 +117,7 @@ public class NotesListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        String mAssetPath = "Notes";
         initNotesList(mAssetPath);
         container = requireActivity().findViewById(R.id.notes_list_fragment);
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_notes_list, container, false);
@@ -189,77 +183,4 @@ public class NotesListFragment extends Fragment {
     }
 */
 
- /*   @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(MainActivity.ARG_NOTE_ID, mNoteId);
-    }
-*/
-//
-// public void showFragmentCommonMode(int n) {
-//     FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-//     FragmentTransaction transaction = fragmentManager.beginTransaction();
-//     transaction.replace(R.id.notes_list_fragment, NotesListFragment.newInstance());
-//     if (n!=-1)
-//         transaction.replace(R.id.note_container, NoteFragment.newInstance(n));
-////        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-//     transaction.addToBackStack(null);
-//     transaction.commit();
-//
-// }
-//
-//
-//    public void showFragmentSeparatedMode(int n) {
-////        requireActivity(). .findViewById(R.id.notes_list_fragment).setText("");
-//        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-//        FragmentTransaction transaction = fragmentManager.beginTransaction();
-//        if (n==-1)
-//            transaction.replace(R.id.notes_list_fragment, NotesListFragment.newInstance());
-//        else
-//            transaction.replace(R.id.notes_list_fragment, NoteFragment.newInstance(n));
-////        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-//        transaction.addToBackStack(null);
-//        transaction.commit();
-///*
-//        Intent intent = new Intent(getActivity(), NoteActivity.class);
-//        intent.putExtra(MainActivity.ARG_NODE_ID.ARG_NODE_ID, mNoteId);
-//        startActivity(intent);
-//*/
-//    }
-//
-//    private void showFragmentCommonMode(int n) {
-//        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-//        FragmentTransaction transaction = fragmentManager.beginTransaction();
-//        transaction.replace(R.id.note_container, NoteFragment.newInstance(n));
-////        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-//        transaction.addToBackStack(null);
-//        transaction.commit();
-//
-//    }
-//
-//
-//    private void showFragmentSeparatedMode(int n) {
-////        requireActivity(). .findViewById(R.id.notes_list_fragment).setText("");
-//        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-//        FragmentTransaction transaction = fragmentManager.beginTransaction();
-//        transaction.replace(R.id.notes_list_fragment, NoteFragment.newInstance(n));
-////        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-//        transaction.addToBackStack(null);
-//        transaction.commit();
-///*
-//        Intent intent = new Intent(getActivity(), NoteActivity.class);
-//        intent.putExtra(MainActivity.ARG_NODE_ID.ARG_NODE_ID, mNoteId);
-//        startActivity(intent);
-//*/
-//    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
 }
