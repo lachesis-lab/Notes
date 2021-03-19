@@ -2,7 +2,6 @@ package ru.lachesis.notes;
 
 import android.app.DatePickerDialog;
 
-import android.content.Intent;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -46,6 +45,7 @@ public class NotesListFragment extends Fragment {
     private static final String ARG_NODE_ID = "ru.lachesis.notes.note_id";
     public static List<Note> mNotesList = new ArrayList();
     private final String mAssetPath = "Notes";
+    private LinearLayout mParentLayout;
 
     // TODO: Rename and change types of parameters
     private int mNoteId = -1;
@@ -66,7 +66,6 @@ public class NotesListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initNotesList(mAssetPath);
     }
 
     private void initNotesList(String assetPath) {
@@ -125,6 +124,8 @@ public class NotesListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        initNotesList(mAssetPath);
+        container = requireActivity().findViewById(R.id.notes_list_fragment);
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_notes_list, container, false);
         for (int i = 0; i < mNotesList.size(); i++) {
             LinearLayout llNote = new LinearLayout(getContext());
@@ -160,10 +161,12 @@ public class NotesListFragment extends Fragment {
             llNote.addView(textViewDate);
 
             textViewName.setOnClickListener(v -> {
-                mNoteId = n;
-                if (Configuration.ORIENTATION_PORTRAIT == getResources().getConfiguration().orientation) {
-                    showFragmentSeparatedMode();
-                } else showFragmentCommonMode(n);
+                MainActivity.mNoteId = n;
+                requireActivity().recreate();
+
+//                if (Configuration.ORIENTATION_PORTRAIT == getResources().getConfiguration().orientation) {
+//                    showFragmentSeparatedMode(n);
+//                } else showFragmentCommonMode(n);
             });
 
             view.addView(llNote);
@@ -171,39 +174,92 @@ public class NotesListFragment extends Fragment {
         return view;
     }
 
+/*
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (savedInstanceState != null) {
-            mNoteId = savedInstanceState.getInt(ARG_NODE_ID, -1);
-            if (mNoteId != -1 && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
-                showFragmentCommonMode(mNoteId);
-            else showFragmentSeparatedMode();
-
+        if  (savedInstanceState != null) {
+            MainActivity.mNoteId = savedInstanceState.getInt(MainActivity.ARG_NOTE_ID, -1);
+            if (MainActivity.mNoteId != -1 && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+                showFragmentCommonMode(MainActivity.mNoteId);
+            else showFragmentSeparatedMode(MainActivity.mNoteId);
         }
+
+    }
+*/
+
+ /*   @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(MainActivity.ARG_NOTE_ID, mNoteId);
+    }
+*/
+//
+// public void showFragmentCommonMode(int n) {
+//     FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+//     FragmentTransaction transaction = fragmentManager.beginTransaction();
+//     transaction.replace(R.id.notes_list_fragment, NotesListFragment.newInstance());
+//     if (n!=-1)
+//         transaction.replace(R.id.note_container, NoteFragment.newInstance(n));
+////        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+//     transaction.addToBackStack(null);
+//     transaction.commit();
+//
+// }
+//
+//
+//    public void showFragmentSeparatedMode(int n) {
+////        requireActivity(). .findViewById(R.id.notes_list_fragment).setText("");
+//        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+//        FragmentTransaction transaction = fragmentManager.beginTransaction();
+//        if (n==-1)
+//            transaction.replace(R.id.notes_list_fragment, NotesListFragment.newInstance());
+//        else
+//            transaction.replace(R.id.notes_list_fragment, NoteFragment.newInstance(n));
+////        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+//        transaction.addToBackStack(null);
+//        transaction.commit();
+///*
+//        Intent intent = new Intent(getActivity(), NoteActivity.class);
+//        intent.putExtra(MainActivity.ARG_NODE_ID.ARG_NODE_ID, mNoteId);
+//        startActivity(intent);
+//*/
+//    }
+//
+//    private void showFragmentCommonMode(int n) {
+//        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+//        FragmentTransaction transaction = fragmentManager.beginTransaction();
+//        transaction.replace(R.id.note_container, NoteFragment.newInstance(n));
+////        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+//        transaction.addToBackStack(null);
+//        transaction.commit();
+//
+//    }
+//
+//
+//    private void showFragmentSeparatedMode(int n) {
+////        requireActivity(). .findViewById(R.id.notes_list_fragment).setText("");
+//        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+//        FragmentTransaction transaction = fragmentManager.beginTransaction();
+//        transaction.replace(R.id.notes_list_fragment, NoteFragment.newInstance(n));
+////        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+//        transaction.addToBackStack(null);
+//        transaction.commit();
+///*
+//        Intent intent = new Intent(getActivity(), NoteActivity.class);
+//        intent.putExtra(MainActivity.ARG_NODE_ID.ARG_NODE_ID, mNoteId);
+//        startActivity(intent);
+//*/
+//    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(ARG_NODE_ID, mNoteId);
-    }
-
-
-    private void showFragmentCommonMode(int n) {
-        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.note_container, NoteFragment.newInstance(n));
-        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        transaction.commit();
-
-    }
-
-
-    private void showFragmentSeparatedMode() {
-        Intent intent = new Intent(getActivity(), NoteActivity.class);
-        intent.putExtra(ARG_NODE_ID, mNoteId);
-        startActivity(intent);
+    public void onDestroyView() {
+        super.onDestroyView();
     }
 }

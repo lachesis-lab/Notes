@@ -34,14 +34,13 @@ public class NoteFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param mNoteId Parameter 1.
      * @return A new instance of fragment NoteFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static NoteFragment newInstance(int mNoteId) {
+    public static NoteFragment newInstance(int noteId) {
         NoteFragment fragment = new NoteFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_NOTE_ID, mNoteId);
+        args.putInt(MainActivity.ARG_NOTE_ID, noteId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -50,7 +49,7 @@ public class NoteFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mNoteId = getArguments().getInt(ARG_NOTE_ID);
+            MainActivity.mNoteId = getArguments().getInt(MainActivity.ARG_NOTE_ID);
         }
     }
 
@@ -64,16 +63,23 @@ public class NoteFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (mNoteId == -1) {
+        if (MainActivity.mNoteId == -1) {
             requireActivity().finish();
             return;
         }
         TextView textView = view.findViewById(R.id.note_text); //new TextView(getActivity());
         textView.setTextSize(28);
 
-        textView.setText(NotesListFragment.mNotesList.get(mNoteId).getNoteText());
+        textView.setText(NotesListFragment.mNotesList.get(MainActivity.mNoteId).getNoteText());
 
 //        textView.setText(texts[mNoteId]);
 
     }
+/*
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(MainActivity.ARG_NOTE_ID, mNoteId);
+    }
+*/
+
 }
