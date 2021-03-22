@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="@string/actionbar_item_search_text"
+        android:id="@+id/actionbar_item_search"
+        android:icon="@android:drawable/ic_menu_search"/>
+    <item android:title="@string/actionbar_item_about_text" app:showAsAction="never"
+        android:id="@+id/actionbar_item_about" />
+    <item android:title="@string/actionbar_item_share_text"
+        android:id="@+id/actionbar_item_share"
+        android:icon="@android:drawable/ic_menu_share"  app:showAsAction="ifRoom"/>
+    <item android:title="@string/actionbar_item_add_text"
+        android:id="@+id/actionbar_item_add" app:showAsAction="always|withText"
+        android:icon="@android:drawable/ic_menu_add"/>
+</menu>
