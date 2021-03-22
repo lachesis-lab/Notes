@@ -1,21 +1,23 @@
 package ru.lachesis.notes;
 
+import android.content.res.Configuration;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.content.Context;
-import android.content.res.Configuration;
-import android.os.Bundle;
-import android.util.AttributeSet;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,34 +31,60 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if (savedInstanceState !=null)
-            mNoteId = savedInstanceState.getInt(ARG_NOTE_ID,-1);
-        if (savedInstanceState==null) {
+        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+        NavigationView navView = findViewById(R.id.nav_view);
+
+        navView.setNavigationItemSelectedListener((item) -> {
+            if (item.getItemId() == R.id.settings) {
+                Snackbar.make(drawer, "Настройки", BaseTransientBottomBar.LENGTH_SHORT);
+                showToast(item);
+            } else if (item.getItemId() == R.id.save) {
+                Snackbar.make(drawer, "Сохранение", BaseTransientBottomBar.LENGTH_SHORT);
+                showToast(item);
+            }
+            drawer.closeDrawer(GravityCompat.START);
+            return true;
+
+        });
+
+
+//        if (savedInstanceState !=null)
+//            mNoteId = savedInstanceState.getInt(ARG_NOTE_ID,-1);
+        if (savedInstanceState == null) {
             FragmentManager fragmentManager = getSupportFragmentManager();
+            NotesListFragment notesList = NotesListFragment.newInstance();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
-            Fragment notesList = NotesListFragment.newInstance();
             transaction.replace(R.id.notes_list_fragment, notesList);
             transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-            transaction.addToBackStack(null);
+//            if (mNoteId != -1)
+//                transaction.addToBackStack(null);
             transaction.commit();
         }
-        if  (savedInstanceState != null) {
-            MainActivity.mNoteId = savedInstanceState.getInt(MainActivity.ARG_NOTE_ID, -1);
-            if (MainActivity.mNoteId != -1 && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
-                showFragmentCommonMode(MainActivity.mNoteId);
-            else showFragmentSeparatedMode(MainActivity.mNoteId);
-        }
 
+        if (savedInstanceState != null) {
+            mNoteId = savedInstanceState.getInt(ARG_NOTE_ID, -1);
+            if (mNoteId != -1 && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                showFragmentCommonMode(mNoteId);
+            } else showFragmentSeparatedMode(mNoteId);
+        }
     }
+
 
     private void showFragmentCommonMode(int n) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.notes_list_fragment, NotesListFragment.newInstance());
-        if (n!=-1)
+        if (n != -1) {
             transaction.replace(R.id.note_container, NoteFragment.newInstance(n));
+            //           transaction.addToBackStack(null);
+        }
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        transaction.addToBackStack(null);
+        if (n != -1)
+            transaction.addToBackStack(null);
         transaction.commit();
 
     }
@@ -65,52 +93,54 @@ public class MainActivity extends AppCompatActivity {
     private void showFragmentSeparatedMode(int n) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        if (n==-1)
+        if (n == -1)
             transaction.replace(R.id.notes_list_fragment, NotesListFragment.newInstance());
-        else
+        else {
             transaction.replace(R.id.notes_list_fragment, NoteFragment.newInstance(n));
+//            transaction.addToBackStack(null);
+        }
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        transaction.addToBackStack(null);
+        if (n != -1)
+            transaction.addToBackStack(null);
         transaction.commit();
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        FragmentManager fm = getSupportFragmentManager();
+        mNoteId = -1;
+
+        while (fm.getBackStackEntryCount() > 0) {
+            if (fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1).getName() == null) {
+                getSupportFragmentManager().popBackStackImmediate();
+            }
+        }
+    }
+
+
+    @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(ARG_NOTE_ID,mNoteId);
+        outState.putInt(ARG_NOTE_ID, mNoteId);
 
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.toolbar_menu,menu);
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-/*
-        switch (item.getItemId()){
-            case R.id.toolbar_menu_item1: {
-                showToast(item);
-                return true;
-            }
-            case R.id.toolbar_menu_item2: {
-                showToast(item);
-                return true;
-            }
-            case R.id.toolbar_menu_item3: {
-                showToast(item);
-                return true;
-            }
-        }
-*/
         showToast(item);
         return true;
     }
 
     private void showToast(MenuItem item) {
-        Toast toast = Toast.makeText(this,item.getTitle(),Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(this, item.getTitle(), Toast.LENGTH_LONG);
         toast.show();
     }
+
 }

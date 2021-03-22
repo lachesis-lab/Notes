@@ -1,6 +1,7 @@
 package ru.lachesis.notes;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Note implements Serializable {
@@ -36,6 +37,10 @@ public class Note implements Serializable {
 
     public String getNoteText() {
         return mNoteText;
+    }
+
+    public String getStringNoteDate() {
+        return SimpleDateFormat.getDateInstance().format(mNoteDate);
     }
 
 
