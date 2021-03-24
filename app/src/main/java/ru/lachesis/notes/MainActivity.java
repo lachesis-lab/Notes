@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navView = findViewById(R.id.nav_view);
 
         navView.setNavigationItemSelectedListener((item) -> {
+/*
             if (item.getItemId() == R.id.settings) {
                 Snackbar.make(drawer, "Настройки", BaseTransientBottomBar.LENGTH_SHORT);
                 showToast(item);
@@ -46,6 +47,10 @@ public class MainActivity extends AppCompatActivity {
                 Snackbar.make(drawer, "Сохранение", BaseTransientBottomBar.LENGTH_SHORT);
                 showToast(item);
             }
+*/
+            Snackbar.make(drawer, getText(item.getItemId()), BaseTransientBottomBar.LENGTH_SHORT);
+            showToast(item);
+
             drawer.closeDrawer(GravityCompat.START);
             return true;
 
@@ -137,7 +142,19 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        showToast(item);
+        if (item.getItemId()==R.id.actionbar_item_edit) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            if(getResources().getConfiguration().orientation==Configuration.ORIENTATION_LANDSCAPE)
+                transaction.replace(R.id.note_container,EditFragment.newInstance(mNoteId));
+            else
+                transaction.replace(R.id.notes_list_fragment,EditFragment.newInstance(mNoteId));
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
+        else
+            showToast(item);
+
         return true;
     }
 

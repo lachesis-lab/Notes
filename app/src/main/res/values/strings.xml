@@ -11,5 +11,6 @@
     <string name="actionbar_item_share_text">Поделиться</string>
     <string name="actionbar_item_add_text">Добавить заметку</string>
     <string name="actionbar_item_about_text">О программе</string>
+    <string name="actionbar_item_edit_text">Редактировать заметку</string>
 
 </resources>

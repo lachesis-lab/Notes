@@ -49,6 +49,7 @@ public class NoteFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_note, container, false);
+
     }
 
     @Override
