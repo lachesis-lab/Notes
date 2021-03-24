@@ -7,15 +7,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -69,10 +74,12 @@ public class EditFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        ViewGroup view= (ViewGroup) inflater.inflate(R.layout.fragment_edit, container, false);
+        ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_edit, container, false);
         mDateEdit = view.findViewById(R.id.edit_note_date);
         mNameEdit = view.findViewById(R.id.edit_note_name);
         mTextEdit = view.findViewById(R.id.edit_note_text);
+        MaterialButton saveButton = view.findViewById(R.id.edit_save_button);
+
         mDateEdit.setOnClickListener(v -> {
             Calendar calendar = Calendar.getInstance();
 
@@ -86,20 +93,73 @@ public class EditFragment extends Fragment {
             }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
             datePickerDialog.show();
         });
+
+        mNameEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (MainActivity.currentNote != null)
+                    MainActivity.currentNote.setNoteName(s.toString());
+
+            }
+        });
+
+        mTextEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (MainActivity.currentNote != null)
+                    MainActivity.currentNote.setNoteText(s.toString());
+
+            }
+        });
+
+
+        saveButton.setOnClickListener(v -> {
+            try {
+                Date date = SimpleDateFormat.getDateInstance().parse(Objects.requireNonNull(mDateEdit.getText()).toString());
+                Note newNote = new Note(mNoteId, Objects.requireNonNull(mNameEdit.getText()).toString(), date,
+                        Objects.requireNonNull(mTextEdit.getText()).toString());
+
+                MainActivity.mNotesList.set(mNoteId, newNote);
+                requireActivity().getSupportFragmentManager().popBackStack();
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        });
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (mNoteId ==-1) {
+        if (mNoteId == -1) {
             requireActivity().finish();
             return;
         }
 
-        mDateEdit.setText(NotesListFragment.mNotesList.get(MainActivity.mNoteId).getStringNoteDate());
-        mNameEdit.setText(NotesListFragment.mNotesList.get(MainActivity.mNoteId).getNoteName());
-        mTextEdit.setText(NotesListFragment.mNotesList.get(MainActivity.mNoteId).getNoteText());
+        mDateEdit.setText(MainActivity.mNotesList.get(MainActivity.mNoteId).getStringNoteDate());
+        mNameEdit.setText(MainActivity.mNotesList.get(MainActivity.mNoteId).getNoteName());
+        mTextEdit.setText(MainActivity.mNotesList.get(MainActivity.mNoteId).getNoteText());
 
     }
 }

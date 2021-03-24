@@ -1,7 +1,6 @@
 package ru.lachesis.notes;
 
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,17 +15,12 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link NotesListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class NotesListFragment extends Fragment {
-
-    public static List<Note> mNotesList = new ArrayList<>();
 
     public NotesListFragment() {
         // Required empty public constructor
@@ -48,15 +42,10 @@ public class NotesListFragment extends Fragment {
     }
 
     //    private void initNotesList(String assetPath) { mNotesList = getNotes(assetPath); }
-    private void initNotesList() {
-        NoteDataSource dataSource = new NoteDataSourceImpl(requireActivity());
-        mNotesList = dataSource.getNoteData();
-    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        initNotesList();
         RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_notes_list, container, false);
         recyclerView.setHasFixedSize(true);
 

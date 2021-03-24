@@ -56,6 +56,12 @@
                     android:inputType="textMultiLine"
                     android:textSize="@dimen/note_text_textSize" />
             </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/edit_save_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="@string/edit_save_button_text"/>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </FrameLayout>

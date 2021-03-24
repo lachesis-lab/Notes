@@ -31,7 +31,7 @@ public class ViewHolderAdapter extends RecyclerView.Adapter<ViewHolderAdapter.Vi
 
     public ViewHolderAdapter(LayoutInflater inflater, NoteDataSource dataSource) {
         mDataSource = dataSource;
-        mNoteList = mDataSource.getNoteData();
+        mNoteList = MainActivity.mNotesList;//mDataSource.getNoteData();
         mInflater = inflater;
     }
 

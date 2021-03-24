@@ -80,11 +80,11 @@ public class NoteDataSourceImpl implements NoteDataSource {
 
     @Override
     public Note getItemAt(int noteId) {
-        return getNoteData().get(noteId);
+        return MainActivity.mNotesList.get(noteId);
     }
 
     @Override
     public int getItemCounts() {
-        return getNoteData().size();
+        return MainActivity.mNotesList.size();
     }
 }
