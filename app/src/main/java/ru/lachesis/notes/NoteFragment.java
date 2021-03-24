@@ -18,11 +18,6 @@ import android.widget.TextView;
  */
 public class NoteFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-
-    // TODO: Rename and change types of parameters
-
     public NoteFragment() {
         // Required empty public constructor
     }
@@ -33,7 +28,6 @@ public class NoteFragment extends Fragment {
      *
      * @return A new instance of fragment NoteFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static NoteFragment newInstance(int noteId) {
         NoteFragment fragment = new NoteFragment();
         Bundle args = new Bundle();

@@ -109,13 +109,16 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         FragmentManager fm = getSupportFragmentManager();
-        mNoteId = -1;
-
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT && mNoteId !=-1) {
+            mNoteId = -1;
+            return;
+        }
         while (fm.getBackStackEntryCount() > 0) {
             if (fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1).getName() == null) {
                 getSupportFragmentManager().popBackStackImmediate();
             }
         }
+        mNoteId= -1;
     }
 
 

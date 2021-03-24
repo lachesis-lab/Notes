@@ -1,36 +1,22 @@
 package ru.lachesis.notes;
 
-import android.app.DatePickerDialog;
-
-import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,11 +25,7 @@ import java.util.Objects;
  */
 public class NotesListFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static List<Note> mNotesList = new ArrayList<>();
-
-    // TODO: Rename and change types of parameters
 
     public NotesListFragment() {
         // Required empty public constructor
@@ -64,65 +46,53 @@ public class NotesListFragment extends Fragment {
 //        setRetainInstance(true);
     }
 
-    private void initNotesList(String assetPath) {
-        mNotesList = getNotes(assetPath);
+    //    private void initNotesList(String assetPath) { mNotesList = getNotes(assetPath); }
+    private void initNotesList() {
+        NoteDataSource dataSource = new NoteDataSourceImpl(requireActivity());
+        mNotesList = dataSource.getNoteData();
     }
 
-    private ArrayList<Note> getNotes(String assetPath) {
-        ArrayList<Note> notes = new ArrayList<>();
-        try {
-            AssetManager manager = Objects.requireNonNull(getActivity()).getAssets();
-            String[] files = manager.list(assetPath);
-            for (String file : files) {
-                String jsString = readJSONFromAsset(assetPath + "/" + file, manager);
-                if (jsString == null) continue;
-                JSONObject js = new JSONObject(jsString);
-                int noteId = js.getInt("noteId");
-                String noteName = js.getString("noteName");
-                DateFormat dateFormat = SimpleDateFormat.getDateTimeInstance();//new SimpleDateFormat();
-                //dateFormat.applyPattern("dd.mm.yyyy");
-                Date noteDate;
-                try {
-                    noteDate = dateFormat.parse(js.getString("noteDate"));
-                } catch (ParseException e) {
-                    noteDate = Calendar.getInstance(Locale.getDefault()).getTime();
-                }
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        initNotesList();
+        RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_notes_list, container, false);
+        recyclerView.setHasFixedSize(true);
 
-                String noteText = js.getString("noteText");
+        DividerItemDecoration decorator = new DividerItemDecoration(requireActivity(),
+                LinearLayoutManager.VERTICAL);
 
-                notes.add(new Note(noteId, noteName, noteDate, noteText));
-            }
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
-        }
-        return notes;
+        decorator.setDrawable(getResources().getDrawable(R.drawable.decoration));
+        recyclerView.addItemDecoration(decorator);
+
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity());
+        recyclerView.setLayoutManager(layoutManager);
+
+        ViewHolderAdapter viewHolderAdapter = new ViewHolderAdapter(inflater,
+                new NoteDataSourceImpl(requireActivity()));
+        viewHolderAdapter.setOnClickListener((v, position) -> {
+            MainActivity.mNoteId = position;
+            if (Configuration.ORIENTATION_PORTRAIT == getResources().getConfiguration().orientation) {
+                showFragmentSeparatedMode(position);
+            } else showFragmentCommonMode(position);
+
+        });
+
+
+        recyclerView.setAdapter(viewHolderAdapter);
+        return recyclerView;
     }
 
-
-    private String readJSONFromAsset(String filename, AssetManager manager) {
-        String json;
-        try {
-            InputStream is = manager.open(filename);
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-            json = new String(buffer);
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        return json;
-    }
-
+    /*
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        String mAssetPath = "Notes";
-        initNotesList(mAssetPath);
+//        String mAssetPath = "Notes";
+        initNotesList();
+//        initNotesList(mAssetPath);
         container = requireActivity().findViewById(R.id.notes_list_fragment);
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_notes_list, container, false);
         for (int i = 0; i < mNotesList.size(); i++) {
@@ -171,6 +141,7 @@ public class NotesListFragment extends Fragment {
         }
         return view;
     }
+*/
 
     private void showFragmentCommonMode(int n) {
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
@@ -226,12 +197,5 @@ public class NotesListFragment extends Fragment {
     public void onResume() {
         super.onResume();
     }
-//
-//    @Override
-//    public void onSaveInstanceState(@NonNull Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//
-//    }
-//
 
 }
