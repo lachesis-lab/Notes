@@ -107,7 +107,7 @@ public class EditFragment extends Fragment {
 
         NoteDataSource dataSource = NoteDataSourceImpl.getInstance(requireActivity().getAssets());
         mCurrentNote = dataSource.getItemAt(mNoteId);
-        if (mEditableNote==null)
+        if (mEditableNote==null || mEditableNote.getNoteId()!=mCurrentNote.getNoteId())
             mEditableNote = new Note(mCurrentNote);
 
         mDateEdit = view.findViewById(R.id.edit_note_date);

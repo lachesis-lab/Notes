@@ -43,7 +43,7 @@ public class NotesListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState == null)
+//        if (savedInstanceState == null)
             initNotesList();
     }
 
