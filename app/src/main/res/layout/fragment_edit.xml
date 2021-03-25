@@ -25,7 +25,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="10"
                     android:inputType="date"
-                    android:textSize="@dimen/note_date_textSize" />
+                    android:focusableInTouchMode="false"
+                    android:textSize="@dimen/note_name_textSize" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout

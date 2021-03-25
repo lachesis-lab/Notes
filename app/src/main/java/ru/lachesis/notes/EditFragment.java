@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
+
+import static android.text.InputType.TYPE_NULL;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -108,6 +111,7 @@ public class EditFragment extends Fragment {
             mEditableNote = new Note(mCurrentNote);
 
         mDateEdit = view.findViewById(R.id.edit_note_date);
+        mDateEdit.setInputType(TYPE_NULL);
         mNameEdit = view.findViewById(R.id.edit_note_name);
         mTextEdit = view.findViewById(R.id.edit_note_text);
         MaterialButton saveButton = view.findViewById(R.id.edit_save_button);
