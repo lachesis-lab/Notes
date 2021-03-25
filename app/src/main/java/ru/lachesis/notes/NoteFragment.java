@@ -59,14 +59,17 @@ public class NoteFragment extends Fragment {
             requireActivity().finish();
             return;
         }
+        NoteDataSource dataSource = NoteDataSourceImpl.getInstance(requireActivity().getAssets());
+        Note currentNote = dataSource.getItemAt(MainActivity.mNoteId);
+
         TextView tvNoteText = view.findViewById(R.id.note_text);
-        tvNoteText.setText(MainActivity.mNotesList.get(MainActivity.mNoteId).getNoteText());
+        tvNoteText.setText(currentNote.getNoteText());
 
         TextView tvNoteDate = view.findViewById(R.id.note_date);
-        tvNoteDate.setText(MainActivity.mNotesList.get(MainActivity.mNoteId).getStringNoteDate());
+        tvNoteDate.setText(currentNote.getStringNoteDate());
 
         TextView tvNoteName = view.findViewById(R.id.note_name);
-        tvNoteName.setText(MainActivity.mNotesList.get(MainActivity.mNoteId).getNoteName());
+        tvNoteName.setText(currentNote.getNoteName());
 
     }
 

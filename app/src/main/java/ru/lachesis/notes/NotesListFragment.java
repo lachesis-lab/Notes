@@ -15,12 +15,17 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link NotesListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class NotesListFragment extends Fragment {
+
+    private static List<Note> mNotesList = new ArrayList<>();
 
     public NotesListFragment() {
         // Required empty public constructor
@@ -38,7 +43,8 @@ public class NotesListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setRetainInstance(true);
+        if (savedInstanceState == null)
+            initNotesList();
     }
 
     //    private void initNotesList(String assetPath) { mNotesList = getNotes(assetPath); }
@@ -60,7 +66,7 @@ public class NotesListFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
         ViewHolderAdapter viewHolderAdapter = new ViewHolderAdapter(inflater,
-                new NoteDataSourceImpl(requireActivity()));
+                NoteDataSourceImpl.getInstance(requireActivity().getAssets()));
         viewHolderAdapter.setOnClickListener((v, position) -> {
             MainActivity.mNoteId = position;
             if (Configuration.ORIENTATION_PORTRAIT == getResources().getConfiguration().orientation) {
@@ -173,19 +179,8 @@ public class NotesListFragment extends Fragment {
     }
 */
 
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
+    private void initNotesList() {
+        NoteDataSource dataSource = NoteDataSourceImpl.getInstance(requireActivity().getAssets());
+        NotesListFragment.mNotesList = dataSource.getNoteData();
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
 }

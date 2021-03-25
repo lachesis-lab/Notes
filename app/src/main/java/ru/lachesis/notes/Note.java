@@ -27,6 +27,13 @@ public class Note implements Parcelable {
         mNoteText = text;
     }
 
+    public Note(Note note) {
+        mNoteId = note.getNoteId();
+        mNoteName = note.mNoteName;
+        mNoteDate = note.getNoteDate();
+        mNoteText = note.getNoteText();
+    }
+
     protected Note(Parcel in) {
         mNoteId = in.readInt();
         mNoteName = in.readString();
@@ -44,6 +51,7 @@ public class Note implements Parcelable {
             return new Note[size];
         }
     };
+
 
     public int getNoteId() {
         return mNoteId;

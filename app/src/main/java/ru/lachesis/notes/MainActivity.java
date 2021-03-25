@@ -19,26 +19,16 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 public class MainActivity extends AppCompatActivity {
 
     public static final String ARG_NOTE_ID = "ru.lachesis.notes.note_id";
     public static final String ARG_NOTE = "ru.lachesis.notes.note";
     public static int mNoteId = -1;
-    public static List<Note> mNotesList = new ArrayList<>();
-    public static Note currentNote;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (savedInstanceState == null)
-            initNotesList();
-        if (mNoteId !=-1)
-            currentNote = mNotesList.get(mNoteId);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -84,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             mNoteId = savedInstanceState.getInt(ARG_NOTE_ID, -1);
+//            Note currentNote = savedInstanceState.getParcelable(ARG_NOTE);
+
             if (mNoteId != -1 && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 showFragmentCommonMode(mNoteId);
             } else showFragmentSeparatedMode(mNoteId);
@@ -96,7 +88,9 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.notes_list_fragment, NotesListFragment.newInstance());
         if (n != -1) {
-            if (fragmentManager.findFragmentById(R.id.note_container)!=null && fragmentManager.findFragmentById(R.id.note_container).getClass().getSimpleName().equals("EditFragment"))
+            if (fragmentManager.findFragmentById(R.id.note_container) != null && fragmentManager.findFragmentById(R.id.note_container).getClass().getSimpleName().equals("EditFragment"))
+                transaction.replace(R.id.note_container, EditFragment.newInstance(n));
+            else if (fragmentManager.findFragmentById(R.id.notes_list_fragment) != null && fragmentManager.findFragmentById(R.id.notes_list_fragment).getClass().getSimpleName().equals("EditFragment"))
                 transaction.replace(R.id.note_container, EditFragment.newInstance(n));
             else transaction.replace(R.id.note_container, NoteFragment.newInstance(n));
             //           transaction.addToBackStack(null);
@@ -115,7 +109,9 @@ public class MainActivity extends AppCompatActivity {
         if (n == -1)
             transaction.replace(R.id.notes_list_fragment, NotesListFragment.newInstance());
         else {
-            if (fragmentManager.findFragmentById(R.id.notes_list_fragment)!=null && fragmentManager.findFragmentById(R.id.note_container).getClass().getSimpleName().equals("EditFragment"))
+            if (fragmentManager.findFragmentById(R.id.notes_list_fragment) != null && fragmentManager.findFragmentById(R.id.notes_list_fragment).getClass().getSimpleName().equals("EditFragment"))
+                transaction.replace(R.id.notes_list_fragment, EditFragment.newInstance(n));
+            else if (fragmentManager.findFragmentById(R.id.note_container) != null && fragmentManager.findFragmentById(R.id.note_container).getClass().getSimpleName().equals("EditFragment"))
                 transaction.replace(R.id.notes_list_fragment, EditFragment.newInstance(n));
             else transaction.replace(R.id.notes_list_fragment, NoteFragment.newInstance(n));
 //            transaction.addToBackStack(null);
@@ -135,9 +131,9 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         while (fm.getBackStackEntryCount() > 0) {
-            if (fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1).getName() == null) {
+//            if (fm.getBackStackEntryAt(fm.getBackStackEntryCount() - 1).getName() == null)
                 getSupportFragmentManager().popBackStackImmediate();
-            }
+
         }
         mNoteId = -1;
     }
@@ -147,7 +143,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(ARG_NOTE_ID, mNoteId);
-        outState.putParcelable(ARG_NOTE, currentNote);
 
     }
 
@@ -179,10 +174,11 @@ public class MainActivity extends AppCompatActivity {
         toast.show();
     }
 
-    private void initNotesList() {
-        NoteDataSource dataSource = new NoteDataSourceImpl(this);
-        MainActivity.mNotesList = dataSource.getNoteData();
+/*
+    @Override
+    public void onSendData(Note note) {
+        Note mEditableNote = note;
+//        getSupportFragmentManager().findFragmentById(R.id.);
     }
-
-
+*/
 }
