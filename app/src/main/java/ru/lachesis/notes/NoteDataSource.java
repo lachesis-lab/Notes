@@ -7,5 +7,6 @@ import java.util.List;
 public interface NoteDataSource {
     List<Note> getNoteData();
     Note getItemAt(int noteId);
+    Note getItemById(int noteId);
     int getItemCounts();
 }

@@ -40,7 +40,7 @@ public class NoteFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            MainActivity.mNoteId = getArguments().getInt(MainActivity.ARG_NOTE_ID);
+            MainActivity.mNotePos = getArguments().getInt(MainActivity.ARG_NOTE_ID);
         }
     }
 
@@ -55,12 +55,12 @@ public class NoteFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (MainActivity.mNoteId == -1) {
+        if (MainActivity.mNotePos == -1) {
             requireActivity().finish();
             return;
         }
         NoteDataSource dataSource = NoteDataSourceImpl.getInstance(requireActivity().getAssets());
-        Note currentNote = dataSource.getItemAt(MainActivity.mNoteId);
+        Note currentNote = dataSource.getItemAt(MainActivity.mNotePos);
 
         TextView tvNoteText = view.findViewById(R.id.note_text);
         tvNoteText.setText(currentNote.getNoteText());

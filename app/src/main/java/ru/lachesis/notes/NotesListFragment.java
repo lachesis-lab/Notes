@@ -68,7 +68,7 @@ public class NotesListFragment extends Fragment {
         ViewHolderAdapter viewHolderAdapter = new ViewHolderAdapter(inflater,
                 NoteDataSourceImpl.getInstance(requireActivity().getAssets()));
         viewHolderAdapter.setOnClickListener((v, position) -> {
-            MainActivity.mNoteId = position;
+            MainActivity.mNotePos = position;
             if (Configuration.ORIENTATION_PORTRAIT == getResources().getConfiguration().orientation) {
                 showFragmentSeparatedMode(position);
             } else showFragmentCommonMode(position);

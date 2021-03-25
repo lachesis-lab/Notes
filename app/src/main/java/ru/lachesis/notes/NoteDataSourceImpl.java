@@ -3,6 +3,9 @@ package ru.lachesis.notes;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,8 +25,8 @@ import java.util.Objects;
 
 public class NoteDataSourceImpl implements NoteDataSource {
 
-//    private final Context mContext;
-    private List<Note> mNotes = new ArrayList<>();
+    //    private final Context mContext;
+    private List<Note> mNotes = new LinkedList<>();
     private volatile static NoteDataSourceImpl sInstance;
 
     public static NoteDataSourceImpl getInstance(AssetManager manager) {
@@ -48,6 +51,7 @@ public class NoteDataSourceImpl implements NoteDataSource {
     private NoteDataSourceImpl(AssetManager manager) {
         mNotes = fillNoteData(manager);
     }
+
     @Override
     public List<Note> getNoteData() {
         return mNotes;
@@ -105,6 +109,15 @@ public class NoteDataSourceImpl implements NoteDataSource {
     @Override
     public Note getItemAt(int noteId) {
         return mNotes.get(noteId);
+    }
+
+    @Override
+    public Note getItemById(int noteId) {
+        for (Note note : mNotes) {
+            if (note.getNoteId()==noteId)
+                    return note;
+        }
+        return null;
     }
 
     @Override

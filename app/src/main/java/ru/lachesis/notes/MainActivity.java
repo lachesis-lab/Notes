@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String ARG_NOTE_ID = "ru.lachesis.notes.note_id";
     public static final String ARG_NOTE = "ru.lachesis.notes.note";
-    public static int mNoteId = -1;
+    public static int mNotePos = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,12 +73,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (savedInstanceState != null) {
-            mNoteId = savedInstanceState.getInt(ARG_NOTE_ID, -1);
+            mNotePos = savedInstanceState.getInt(ARG_NOTE_ID, -1);
 //            Note currentNote = savedInstanceState.getParcelable(ARG_NOTE);
 
-            if (mNoteId != -1 && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                showFragmentCommonMode(mNoteId);
-            } else showFragmentSeparatedMode(mNoteId);
+            if (mNotePos != -1 && getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                showFragmentCommonMode(mNotePos);
+            } else showFragmentSeparatedMode(mNotePos);
         }
     }
 
@@ -126,8 +126,8 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         FragmentManager fm = getSupportFragmentManager();
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT && mNoteId != -1) {
-            mNoteId = -1;
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT && mNotePos != -1) {
+            mNotePos = -1;
             return;
         }
         while (fm.getBackStackEntryCount() > 0) {
@@ -135,14 +135,14 @@ public class MainActivity extends AppCompatActivity {
                 getSupportFragmentManager().popBackStackImmediate();
 
         }
-        mNoteId = -1;
+        mNotePos = -1;
     }
 
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(ARG_NOTE_ID, mNoteId);
+        outState.putInt(ARG_NOTE_ID, mNotePos);
 
     }
 
@@ -158,9 +158,9 @@ public class MainActivity extends AppCompatActivity {
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
-                transaction.replace(R.id.note_container, EditFragment.newInstance(mNoteId));
+                transaction.replace(R.id.note_container, EditFragment.newInstance(mNotePos));
             else
-                transaction.replace(R.id.notes_list_fragment, EditFragment.newInstance(mNoteId));
+                transaction.replace(R.id.notes_list_fragment, EditFragment.newInstance(mNotePos));
             transaction.addToBackStack(null);
             transaction.commit();
         } else

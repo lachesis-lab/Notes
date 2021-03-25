@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,11 +40,11 @@ public class EditFragment extends Fragment {
 */
 
     // TODO: Rename and change types of parameters
-    private int mNoteId;
+    private int mNotePos;
     TextInputEditText mDateEdit;
     TextInputEditText mNameEdit;
     TextInputEditText mTextEdit;
-    Note mCurrentNote;
+    static Note mCurrentNote;
     static Note mEditableNote;
 
 /*
@@ -92,7 +91,7 @@ public class EditFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mNoteId = getArguments().getInt(MainActivity.ARG_NOTE_ID);
+            mNotePos = getArguments().getInt(MainActivity.ARG_NOTE_ID);
         }
         if (savedInstanceState != null)
             mEditableNote = savedInstanceState.getParcelable(MainActivity.ARG_NOTE);
@@ -106,8 +105,8 @@ public class EditFragment extends Fragment {
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_edit, container, false);
 
         NoteDataSource dataSource = NoteDataSourceImpl.getInstance(requireActivity().getAssets());
-        mCurrentNote = dataSource.getItemAt(mNoteId);
-        if (mEditableNote==null)
+        mCurrentNote = dataSource.getItemAt(mNotePos);
+        if (mEditableNote==null || mEditableNote.getNoteId()!= mCurrentNote.getNoteId())
             mEditableNote = new Note(mCurrentNote);
 
         mDateEdit = view.findViewById(R.id.edit_note_date);
@@ -195,7 +194,7 @@ public class EditFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (mNoteId == -1) {
+        if (mNotePos == -1) {
             requireActivity().finish();
             return;
         }
