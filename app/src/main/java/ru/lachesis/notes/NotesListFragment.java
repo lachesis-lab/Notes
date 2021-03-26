@@ -2,7 +2,10 @@ package ru.lachesis.notes;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -16,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -23,9 +27,15 @@ import java.util.List;
  * Use the {@link NotesListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
+
+
 public class NotesListFragment extends Fragment {
 
-    private static List<Note> mNotesList = new ArrayList<>();
+    private static List<Note> mNotesList = new LinkedList<>();
+    private NoteDataSource mDataSource;
+    private RecyclerView mRecyclerView;
+    private ViewHolderAdapter mViewHolderAdapter;
+    private int mLastSelectedPosition = -1;
 
     public NotesListFragment() {
         // Required empty public constructor
@@ -43,8 +53,7 @@ public class NotesListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState == null)
-            initNotesList();
+        setHasOptionsMenu(true);
     }
 
     //    private void initNotesList(String assetPath) { mNotesList = getNotes(assetPath); }
@@ -52,22 +61,25 @@ public class NotesListFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_notes_list, container, false);
-        recyclerView.setHasFixedSize(true);
+        mRecyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_notes_list, container, false);
+        mRecyclerView.setHasFixedSize(true);
 
         DividerItemDecoration decorator = new DividerItemDecoration(requireActivity(),
                 LinearLayoutManager.VERTICAL);
 
         decorator.setDrawable(getResources().getDrawable(R.drawable.decoration));
-        recyclerView.addItemDecoration(decorator);
+        mRecyclerView.addItemDecoration(decorator);
 
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity());
-        recyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setLayoutManager(layoutManager);
 
-        ViewHolderAdapter viewHolderAdapter = new ViewHolderAdapter(inflater,
+        mDataSource = NoteDataSourceImpl.getInstance(requireActivity().getAssets());
+        NotesListFragment.mNotesList = mDataSource.getNoteData();
+
+        mViewHolderAdapter = new ViewHolderAdapter(this,
                 NoteDataSourceImpl.getInstance(requireActivity().getAssets()));
-        viewHolderAdapter.setOnClickListener((v, position) -> {
+        mViewHolderAdapter.setOnClickListener((v, position) -> {
             MainActivity.mNotePos = position;
             if (Configuration.ORIENTATION_PORTRAIT == getResources().getConfiguration().orientation) {
                 showFragmentSeparatedMode(position);
@@ -75,69 +87,9 @@ public class NotesListFragment extends Fragment {
 
         });
 
-
-        recyclerView.setAdapter(viewHolderAdapter);
-        return recyclerView;
+        mRecyclerView.setAdapter(mViewHolderAdapter);
+        return mRecyclerView;
     }
-
-    /*
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-//        String mAssetPath = "Notes";
-        initNotesList();
-//        initNotesList(mAssetPath);
-        container = requireActivity().findViewById(R.id.notes_list_fragment);
-        ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_notes_list, container, false);
-        for (int i = 0; i < mNotesList.size(); i++) {
-            LinearLayout llNote = new LinearLayout(getContext());
-            TextView textViewDate = new TextView(getContext());
-//            String date = SimpleDateFormat.getDateInstance().format(mNotesList.get(i).getNoteDate());
-            String date = mNotesList.get(i).getStringNoteDate();
-            textViewDate.setText(date);
-            textViewDate.setTextSize(16);
-            textViewDate.setPadding(5, 2, 5, 0);
-            llNote.addView(textViewDate);
-
-            llNote.setOrientation(LinearLayout.VERTICAL);
-            TextView textViewName = new TextView(getContext());
-            textViewName.setText(mNotesList.get(i).getNoteName());
-            textViewName.setPadding(5, 2, 5, 0);
-            textViewName.setTextSize(24);
-            llNote.addView(textViewName);
-
-            final int n = i;
-            textViewDate.setOnClickListener(v -> {
-                Calendar calendar = Calendar.getInstance();
-
-                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (view1, year, month, dayOfMonth) -> {
-
-                    calendar.set(year, month, dayOfMonth);
-                    Date date1 = calendar.getTime();
-
-                    String dateStr = SimpleDateFormat.getDateInstance().format(date1);
-                    textViewDate.setText(dateStr);
-                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-                datePickerDialog.show();
-            });
-
-            textViewName.setOnClickListener(v -> {
-
-                MainActivity.mNoteId = n;
-                if (Configuration.ORIENTATION_PORTRAIT == getResources().getConfiguration().orientation) {
-                    showFragmentSeparatedMode(n);
-                } else showFragmentCommonMode(n);
-//                requireActivity().recreate();
-//                MainActivity.mNoteIdPrev = n;
-            });
-
-            view.addView(llNote);
-        }
-        return view;
-    }
-*/
 
     private void showFragmentCommonMode(int n) {
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
@@ -179,8 +131,44 @@ public class NotesListFragment extends Fragment {
     }
 */
 
+/*
     private void initNotesList() {
         NoteDataSource dataSource = NoteDataSourceImpl.getInstance(requireActivity().getAssets());
         NotesListFragment.mNotesList = dataSource.getNoteData();
+    }
+*/
+/*
+    @Override
+    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater menuInflater = requireActivity().getMenuInflater();
+        menuInflater.inflate(R.menu.item_menu,menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.item_menu_edit) {
+            if (mLastSelectedPosition != -1) {
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.replace(R.id.notes_list_fragment,
+                        EditFragment.newInstance(mLastSelectedPosition));
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        } else if (item.getItemId() == R.id.item_menu_remove) {
+            if (mLastSelectedPosition != -1) {
+                mDataSource.remove(mLastSelectedPosition);
+                mViewHolderAdapter.notifyItemRemoved(mLastSelectedPosition);
+            }
+        } else {
+            return super.onContextItemSelected(item);
+        }
+        return true;
+    }
+*/
+
+    void setLastSelectedPosition(int lastSelectedPosition) {
+        mLastSelectedPosition = lastSelectedPosition;
     }
 }

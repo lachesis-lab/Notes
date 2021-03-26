@@ -5,14 +5,21 @@
     <item android:title="@string/actionbar_item_edit_text"
         android:id="@+id/actionbar_item_edit"
         android:icon="@android:drawable/ic_menu_edit" app:showAsAction="ifRoom"/>
+
     <item android:title="@string/actionbar_item_search_text"
         android:id="@+id/actionbar_item_search"
         android:icon="@android:drawable/ic_menu_search"/>
+
+    <item android:title="@string/actionbar_item_clear_text"
+        android:id="@+id/actionbar_item_clear" app:showAsAction="never" />
+
     <item android:title="@string/actionbar_item_about_text" app:showAsAction="never"
         android:id="@+id/actionbar_item_about" />
+
     <item android:title="@string/actionbar_item_share_text"
         android:id="@+id/actionbar_item_share"
         android:icon="@android:drawable/ic_menu_share"  app:showAsAction="ifRoom"/>
+
     <item android:title="@string/actionbar_item_add_text"
         android:id="@+id/actionbar_item_add" app:showAsAction="always|withText"
         android:icon="@android:drawable/ic_menu_add"/>

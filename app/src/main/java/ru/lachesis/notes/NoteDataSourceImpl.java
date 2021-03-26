@@ -1,11 +1,6 @@
 package ru.lachesis.notes;
 
-import android.content.Context;
 import android.content.res.AssetManager;
-import android.content.res.Resources;
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,18 +10,16 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 public class NoteDataSourceImpl implements NoteDataSource {
 
     //    private final Context mContext;
-    private List<Note> mNotes = new LinkedList<>();
+    private final LinkedList<Note> mNotes = new LinkedList<>();
     private volatile static NoteDataSourceImpl sInstance;
 
     public static NoteDataSourceImpl getInstance(AssetManager manager) {
@@ -49,7 +42,7 @@ public class NoteDataSourceImpl implements NoteDataSource {
 //    }
 
     private NoteDataSourceImpl(AssetManager manager) {
-        mNotes = fillNoteData(manager);
+        fillNoteData(manager);
     }
 
     @Override
@@ -57,7 +50,7 @@ public class NoteDataSourceImpl implements NoteDataSource {
         return mNotes;
     }
 
-    private List<Note> fillNoteData(AssetManager manager) {
+    private void fillNoteData(AssetManager manager) {
         try {
 //            AssetManager manager = Objects.requireNonNull(mContext.getAssets());
             String assetPath = "Notes";
@@ -84,7 +77,6 @@ public class NoteDataSourceImpl implements NoteDataSource {
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
-        return mNotes;
     }
 
 
@@ -123,5 +115,15 @@ public class NoteDataSourceImpl implements NoteDataSource {
     @Override
     public int getItemCounts() {
         return mNotes.size();
+    }
+
+    @Override
+    public void remove(int mLastSelectedPosition) {
+        mNotes.remove(mLastSelectedPosition);
+    }
+
+    @Override
+    public void add(Note note) {
+
     }
 }

@@ -13,5 +13,8 @@
     <string name="actionbar_item_about_text">О программе</string>
     <string name="actionbar_item_edit_text">Редактировать заметку</string>
     <string name="edit_save_button_text">Сохранить</string>
+    <string name="item_menu_edit_text">Изменить</string>
+    <string name="item_menu_remove_text">Удалить</string>
+    <string name="actionbar_item_clear_text">Очистить список</string>
 
 </resources>
