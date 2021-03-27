@@ -44,9 +44,10 @@ public class EditFragment extends Fragment {
     TextInputEditText mDateEdit;
     TextInputEditText mNameEdit;
     TextInputEditText mTextEdit;
-    static Note mCurrentNote;
-    static Note mEditableNote;
-
+    private Note mCurrentNote;
+    private static Note mEditableNote;
+    private NoteDataSource mDataSource;
+    private ViewHolderAdapter mViewHolderAdapter;
 /*
     interface OnFragmentSendDataListener {
         void onSendData(Note note);
@@ -104,8 +105,8 @@ public class EditFragment extends Fragment {
         // Inflate the layout for this fragment
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_edit, container, false);
 
-        NoteDataSource dataSource = NoteDataSourceImpl.getInstance(requireActivity().getAssets());
-        mCurrentNote = dataSource.getItemAt(mNotePos);
+        mDataSource = NoteDataSourceImpl.getInstance(requireActivity().getAssets());
+        mCurrentNote = mDataSource.getItemAt(mNotePos);
         if (mEditableNote==null || mEditableNote.getNoteId()!= mCurrentNote.getNoteId())
             mEditableNote = new Note(mCurrentNote);
 
@@ -180,7 +181,10 @@ public class EditFragment extends Fragment {
                 mCurrentNote.setNoteName(mNameEdit.getText().toString());
                 mCurrentNote.setNoteText(mTextEdit.getText().toString());
                 mCurrentNote.setNoteDate(date);
+                mDataSource = NoteDataSourceImpl.getInstance(requireActivity().getAssets());
+//                mViewHolderAdapter = new ViewHolderAdapter(NotesListFragment.newInstance(),mDataSource);
                 FragmentManager fm = requireActivity().getSupportFragmentManager();
+  //              mViewHolderAdapter.notifyDataSetChanged();
                 while ( fm.getBackStackEntryCount()>0) {
                         fm.popBackStackImmediate();
                 }

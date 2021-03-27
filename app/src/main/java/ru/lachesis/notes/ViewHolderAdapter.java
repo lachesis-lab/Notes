@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ViewHolderAdapter extends RecyclerView.Adapter<ViewHolderAdapter.ViewHolder> {
@@ -37,6 +36,7 @@ public class ViewHolderAdapter extends RecyclerView.Adapter<ViewHolderAdapter.Vi
         mNoteList = mDataSource.getNoteData();
         mFragment = fragment;
         mInflater = fragment.getLayoutInflater();
+        setHasStableIds(true);
     }
 
     @Override
@@ -66,6 +66,14 @@ public class ViewHolderAdapter extends RecyclerView.Adapter<ViewHolderAdapter.Vi
         void onItemClick(View v,int position);
     }
 
+    @Override
+    public long getItemId(int position) {
+        return mDataSource.getItemAt(position).getNoteId();
+//        return super.getItemId(position);
+
+    }
+
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private static final AtomicInteger COUNTER = new AtomicInteger();
         final int mNotePos;
@@ -83,9 +91,10 @@ public class ViewHolderAdapter extends RecyclerView.Adapter<ViewHolderAdapter.Vi
             mNoteDate.setText(noteCard.getStringNoteDate());
             itemView.setOnLongClickListener((v) -> {
                 fragment.setLastSelectedPosition(getLayoutPosition());
-                MainActivity.mNotePos = getLayoutPosition();
+   //             MainActivity.mNotePos = getLayoutPosition();
                 return false;
             });
+//            itemView.setOnClickListener(v->fragment.setLastSelectedPosition(getLayoutPosition()));
             fragment.registerForContextMenu(itemView);
         }
 
@@ -94,4 +103,5 @@ public class ViewHolderAdapter extends RecyclerView.Adapter<ViewHolderAdapter.Vi
             fragment.unregisterForContextMenu(itemView);
         }
     }
+
 }

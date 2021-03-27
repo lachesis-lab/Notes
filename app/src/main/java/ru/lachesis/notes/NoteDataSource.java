@@ -12,4 +12,7 @@ public interface NoteDataSource {
 
     void remove(int mLastSelectedPosition);
     void add(Note note);
+    void clear();
+
+    int getNewId();
 }

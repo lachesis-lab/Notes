@@ -10,7 +10,10 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -124,6 +127,23 @@ public class NoteDataSourceImpl implements NoteDataSource {
 
     @Override
     public void add(Note note) {
+        mNotes.add(note);
+    }
 
+    @Override
+    public void clear() {
+        mNotes.clear();
+    }
+
+    @Override
+    public int getNewId() {
+        List<Integer> ids = new ArrayList<>();
+        if (mNotes.size() == 0)
+            return 0;
+        else {
+            for (Note note : mNotes)
+                ids.add(note.getNoteId());
+            return Collections.max(ids) + 1;
+        }
     }
 }

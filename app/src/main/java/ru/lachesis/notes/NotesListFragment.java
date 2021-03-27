@@ -4,10 +4,12 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,8 +21,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -75,12 +79,13 @@ public class NotesListFragment extends Fragment {
         mRecyclerView.setLayoutManager(layoutManager);
 
         mDataSource = NoteDataSourceImpl.getInstance(requireActivity().getAssets());
-        NotesListFragment.mNotesList = mDataSource.getNoteData();
+        mNotesList = mDataSource.getNoteData();
 
         mViewHolderAdapter = new ViewHolderAdapter(this,
                 NoteDataSourceImpl.getInstance(requireActivity().getAssets()));
         mViewHolderAdapter.setOnClickListener((v, position) -> {
             MainActivity.mNotePos = position;
+            mLastSelectedPosition =position;
             if (Configuration.ORIENTATION_PORTRAIT == getResources().getConfiguration().orientation) {
                 showFragmentSeparatedMode(position);
             } else showFragmentCommonMode(position);
@@ -117,6 +122,71 @@ public class NotesListFragment extends Fragment {
         transaction.commit();
     }
 
+//    @Override
+//    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+////        super.onCreateOptionsMenu(menu, inflater);
+//        inflater.inflate(R.menu.toolbar_menu, menu);
+//    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.actionbar_item_edit) {
+            setFragmentPositionByOrientation();
+        } else if (item.getItemId() == R.id.actionbar_item_clear){
+            mDataSource.clear();
+            mViewHolderAdapter.notifyDataSetChanged();
+        } else if (item.getItemId() == R.id.actionbar_item_add){
+            int newId = mDataSource.getNewId();
+            mDataSource.add(new Note(newId,"New note "+newId, Calendar.getInstance(Locale.getDefault()).getTime(),"new note text"));
+            int pos = mDataSource.getItemCounts()-1;
+            mViewHolderAdapter.notifyItemInserted(pos);
+            mRecyclerView.scrollToPosition(pos);
+        } else
+            showToast(item);
+
+        return true;
+    }
+
+    @Override
+    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater menuInflater = requireActivity().getMenuInflater();
+        menuInflater.inflate(R.menu.item_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        NoteDataSource noteDataSource = NoteDataSourceImpl.getInstance(getAssets());
+//        mViewHolderAdapter = new ViewHolderAdapter((NotesListFragment) mFragmentManager.findFragmentById(R.id.notes_list_fragment), mNoteDataSource);
+        if (item.getItemId() == R.id.item_menu_edit) {
+            setFragmentPositionByOrientation();
+        } else if (item.getItemId() == R.id.item_menu_remove) {
+            if (mLastSelectedPosition != -1) {
+                mDataSource.remove(mLastSelectedPosition);
+                mViewHolderAdapter.notifyItemRemoved(mLastSelectedPosition);
+            }
+        } else {
+            return super.onContextItemSelected(item);
+        }
+        return true;
+    }
+
+    private void showToast(MenuItem item) {
+        Toast toast = Toast.makeText(requireActivity(), item.getTitle(), Toast.LENGTH_LONG);
+        toast.show();
+    }
+
+    private void setFragmentPositionByOrientation() {
+        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+            transaction.replace(R.id.note_container, EditFragment.newInstance(mLastSelectedPosition));
+        else
+            transaction.replace(R.id.notes_list_fragment, EditFragment.newInstance(mLastSelectedPosition));
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
 
 /*
     @Override
@@ -170,5 +240,6 @@ public class NotesListFragment extends Fragment {
 
     void setLastSelectedPosition(int lastSelectedPosition) {
         mLastSelectedPosition = lastSelectedPosition;
+        MainActivity.mNotePos = lastSelectedPosition;
     }
 }

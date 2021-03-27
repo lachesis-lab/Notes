@@ -1,17 +1,12 @@
 package ru.lachesis.notes;
 
-import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -24,16 +19,22 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  {
 
     public static final String ARG_NOTE_ID = "ru.lachesis.notes.note_id";
     public static final String ARG_NOTE = "ru.lachesis.notes.note";
     public static int mNotePos = -1;
+//    private ViewHolderAdapter mViewHolderAdapter;
+//    private static NoteDataSource mNoteDataSource;
+//    private FragmentManager mFragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+//        mFragmentManager = getSupportFragmentManager();
+//        mNoteDataSource = NoteDataSourceImpl.getInstance(getAssets());
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -70,8 +71,17 @@ public class MainActivity extends AppCompatActivity {
 
         setFragmentPosition(isFirstTime);
     }
+/*
 
+    @Override
+    public void onAttachFragment(@NonNull Fragment fragment) {
+        if (fragment.getClass().equals(NotesListFragment.class))
+ //        mViewHolderAdapter = new ViewHolderAdapter((NotesListFragment) mFragmentManager.findFragmentById(R.id.notes_list_fragment), mNoteDataSource);
+        mViewHolderAdapter = new ViewHolderAdapter( (NotesListFragment)fragment, mNoteDataSource);
+    }
+*/
 
+/*
     @Override
     public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -81,22 +91,22 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        NoteDataSource noteDataSource = NoteDataSourceImpl.getInstance(getAssets());
+//        mViewHolderAdapter = new ViewHolderAdapter((NotesListFragment) mFragmentManager.findFragmentById(R.id.notes_list_fragment), mNoteDataSource);
         if (item.getItemId() == R.id.item_menu_edit) {
             setFragmentPositionByOrientation();
         } else if (item.getItemId() == R.id.item_menu_remove) {
             if (mNotePos != -1) {
-                NoteDataSource noteDataSource = NoteDataSourceImpl.getInstance(getAssets());
-                noteDataSource.remove(mNotePos);
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                ViewHolderAdapter viewHolderAdapter = new ViewHolderAdapter((NotesListFragment) fragmentManager.findFragmentById(R.id.notes_list_fragment), noteDataSource);
-                viewHolderAdapter.notifyItemRemoved(mNotePos);
+                mNoteDataSource.remove(mNotePos);
+                mViewHolderAdapter.notifyItemRemoved(mNotePos);
             }
         } else {
             return super.onContextItemSelected(item);
         }
         return true;
     }
-
+*/
 
     @Override
     public void onBackPressed() {
@@ -122,23 +132,27 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         return true;
     }
-
+/*
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.actionbar_item_edit) {
             setFragmentPositionByOrientation();
         } else if (item.getItemId() == R.id.actionbar_item_clear){
 
+        } else if (item.getItemId() == R.id.actionbar_item_add){
+
         } else
             showToast(item);
 
         return true;
     }
+*/
 
     private void setFragmentPosition(Boolean isFirstTime) {
         if (isFirstTime) {
@@ -154,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
         } else showFragmentSeparatedMode(mNotePos);
     }
 
+/*
     private void setFragmentPositionByOrientation() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -164,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
         transaction.addToBackStack(null);
         transaction.commit();
     }
+*/
 
     private void showFragmentCommonMode(int n) {
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -206,6 +222,8 @@ public class MainActivity extends AppCompatActivity {
         Toast toast = Toast.makeText(this, item.getTitle(), Toast.LENGTH_LONG);
         toast.show();
     }
+
+
 
 /*
     @Override
