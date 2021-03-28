@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="drawer_header_text_size">18sp</dimen>
+    <dimen name="note_date_textSize">18sp</dimen>
+    <dimen name="note_name_textSize">28sp</dimen>
+    <dimen name="note_text_textSize">24sp</dimen>
+</resources>
