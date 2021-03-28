@@ -1,6 +1,7 @@
 package ru.lachesis.notes;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,8 +9,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,25 +46,22 @@ public class EditFragment extends Fragment {
     private Note mCurrentNote;
     private static Note mEditableNote;
     private NoteDataSource mDataSource;
-    private ViewHolderAdapter mViewHolderAdapter;
-/*
-    interface OnFragmentSendDataListener {
-        void onSendData(Note note);
+
+    interface OnSaveDataListener {
+        void onSaveData();
     }
 
-    private OnFragmentSendDataListener fragmentSendDataListener;
-*/
-/*
+    private OnSaveDataListener saveDataListener;
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-            fragmentSendDataListener = (OnFragmentSendDataListener) context;
+            saveDataListener = (OnSaveDataListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString());
         }
     }
-*/
 
     public EditFragment() {
         // Required empty public constructor
@@ -107,7 +103,7 @@ public class EditFragment extends Fragment {
 
         mDataSource = NoteDataSourceImpl.getInstance(requireActivity().getAssets());
         mCurrentNote = mDataSource.getItemAt(mNotePos);
-        if (mEditableNote==null || mEditableNote.getNoteId()!= mCurrentNote.getNoteId())
+        if (mEditableNote == null || mEditableNote.getNoteId() != mCurrentNote.getNoteId())
             mEditableNote = new Note(mCurrentNote);
 
         mDateEdit = view.findViewById(R.id.edit_note_date);
@@ -127,12 +123,13 @@ public class EditFragment extends Fragment {
                 String dateStr = SimpleDateFormat.getDateInstance().format(date1);
                 mDateEdit.setText(dateStr);
                 mEditableNote.setNoteDate(date1);
-//                fragmentSendDataListener.onSendData(mEditableNote);
+
 
             }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
             datePickerDialog.show();
         });
 
+/*
         mNameEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -174,19 +171,17 @@ public class EditFragment extends Fragment {
             }
         });
 
-
+*/
         saveButton.setOnClickListener(v -> {
             try {
                 Date date = SimpleDateFormat.getDateInstance().parse(Objects.requireNonNull(mDateEdit.getText()).toString());
                 mCurrentNote.setNoteName(mNameEdit.getText().toString());
                 mCurrentNote.setNoteText(mTextEdit.getText().toString());
                 mCurrentNote.setNoteDate(date);
-                mDataSource = NoteDataSourceImpl.getInstance(requireActivity().getAssets());
-//                mViewHolderAdapter = new ViewHolderAdapter(NotesListFragment.newInstance(),mDataSource);
+                saveDataListener.onSaveData();
                 FragmentManager fm = requireActivity().getSupportFragmentManager();
-  //              mViewHolderAdapter.notifyDataSetChanged();
-                while ( fm.getBackStackEntryCount()>0) {
-                        fm.popBackStackImmediate();
+                while (fm.getBackStackEntryCount() > 0) {
+                    fm.popBackStackImmediate();
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -194,6 +189,7 @@ public class EditFragment extends Fragment {
         });
         return view;
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -213,17 +209,10 @@ public class EditFragment extends Fragment {
         }
     }
 
-/*
-    public void setEditableNote(Note note){
-        mEditableNote = note;
-    }
-*/
-
-
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 //        if (mEditableNote!=null)
-        outState.putParcelable(MainActivity.ARG_NOTE,mEditableNote);
+       outState.putParcelable(MainActivity.ARG_NOTE, mEditableNote);
     }
 }

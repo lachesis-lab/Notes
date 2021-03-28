@@ -4,7 +4,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.Menu;
+
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,7 +32,7 @@ import java.util.Locale;
  */
 
 
-public class NotesListFragment extends Fragment {
+public class NotesListFragment extends Fragment  {
 
     private static List<Note> mNotesList = new LinkedList<>();
     private NoteDataSource mDataSource;
@@ -122,17 +121,9 @@ public class NotesListFragment extends Fragment {
         transaction.commit();
     }
 
-//    @Override
-//    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-////        super.onCreateOptionsMenu(menu, inflater);
-//        inflater.inflate(R.menu.toolbar_menu, menu);
-//    }
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.actionbar_item_edit) {
-            setFragmentPositionByOrientation();
-        } else if (item.getItemId() == R.id.actionbar_item_clear){
+        if (item.getItemId() == R.id.actionbar_item_clear){
             mDataSource.clear();
             mViewHolderAdapter.notifyDataSetChanged();
         } else if (item.getItemId() == R.id.actionbar_item_add){
@@ -156,9 +147,6 @@ public class NotesListFragment extends Fragment {
 
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        NoteDataSource noteDataSource = NoteDataSourceImpl.getInstance(getAssets());
-//        mViewHolderAdapter = new ViewHolderAdapter((NotesListFragment) mFragmentManager.findFragmentById(R.id.notes_list_fragment), mNoteDataSource);
         if (item.getItemId() == R.id.item_menu_edit) {
             setFragmentPositionByOrientation();
         } else if (item.getItemId() == R.id.item_menu_remove) {
@@ -201,45 +189,12 @@ public class NotesListFragment extends Fragment {
     }
 */
 
-/*
-    private void initNotesList() {
-        NoteDataSource dataSource = NoteDataSourceImpl.getInstance(requireActivity().getAssets());
-        NotesListFragment.mNotesList = dataSource.getNoteData();
-    }
-*/
-/*
-    @Override
-    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater menuInflater = requireActivity().getMenuInflater();
-        menuInflater.inflate(R.menu.item_menu,menu);
-    }
-
-    @Override
-    public boolean onContextItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.item_menu_edit) {
-            if (mLastSelectedPosition != -1) {
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.replace(R.id.notes_list_fragment,
-                        EditFragment.newInstance(mLastSelectedPosition));
-                transaction.addToBackStack(null);
-                transaction.commit();
-            }
-        } else if (item.getItemId() == R.id.item_menu_remove) {
-            if (mLastSelectedPosition != -1) {
-                mDataSource.remove(mLastSelectedPosition);
-                mViewHolderAdapter.notifyItemRemoved(mLastSelectedPosition);
-            }
-        } else {
-            return super.onContextItemSelected(item);
-        }
-        return true;
-    }
-*/
-
     void setLastSelectedPosition(int lastSelectedPosition) {
         mLastSelectedPosition = lastSelectedPosition;
         MainActivity.mNotePos = lastSelectedPosition;
+    }
+
+    void notifyAdapter() {
+        mViewHolderAdapter.notifyDataSetChanged();
     }
 }

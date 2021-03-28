@@ -16,7 +16,7 @@ import android.widget.TextView;
  * Use the {@link NoteFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NoteFragment extends Fragment {
+public class NoteFragment extends Fragment  {
 
     public NoteFragment() {
         // Required empty public constructor

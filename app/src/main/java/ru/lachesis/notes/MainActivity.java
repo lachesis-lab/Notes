@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -19,7 +20,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity implements EditFragment.OnSaveDataListener {
 
     public static final String ARG_NOTE_ID = "ru.lachesis.notes.note_id";
     public static final String ARG_NOTE = "ru.lachesis.notes.note";
@@ -71,42 +72,6 @@ public class MainActivity extends AppCompatActivity  {
 
         setFragmentPosition(isFirstTime);
     }
-/*
-
-    @Override
-    public void onAttachFragment(@NonNull Fragment fragment) {
-        if (fragment.getClass().equals(NotesListFragment.class))
- //        mViewHolderAdapter = new ViewHolderAdapter((NotesListFragment) mFragmentManager.findFragmentById(R.id.notes_list_fragment), mNoteDataSource);
-        mViewHolderAdapter = new ViewHolderAdapter( (NotesListFragment)fragment, mNoteDataSource);
-    }
-*/
-
-/*
-    @Override
-    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.item_menu, menu);
-    }
-
-    @Override
-    public boolean onContextItemSelected(@NonNull MenuItem item) {
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        NoteDataSource noteDataSource = NoteDataSourceImpl.getInstance(getAssets());
-//        mViewHolderAdapter = new ViewHolderAdapter((NotesListFragment) mFragmentManager.findFragmentById(R.id.notes_list_fragment), mNoteDataSource);
-        if (item.getItemId() == R.id.item_menu_edit) {
-            setFragmentPositionByOrientation();
-        } else if (item.getItemId() == R.id.item_menu_remove) {
-            if (mNotePos != -1) {
-                mNoteDataSource.remove(mNotePos);
-                mViewHolderAdapter.notifyItemRemoved(mNotePos);
-            }
-        } else {
-            return super.onContextItemSelected(item);
-        }
-        return true;
-    }
-*/
 
     @Override
     public void onBackPressed() {
@@ -138,21 +103,6 @@ public class MainActivity extends AppCompatActivity  {
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         return true;
     }
-/*
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.actionbar_item_edit) {
-            setFragmentPositionByOrientation();
-        } else if (item.getItemId() == R.id.actionbar_item_clear){
-
-        } else if (item.getItemId() == R.id.actionbar_item_add){
-
-        } else
-            showToast(item);
-
-        return true;
-    }
-*/
 
     private void setFragmentPosition(Boolean isFirstTime) {
         if (isFirstTime) {
@@ -168,27 +118,14 @@ public class MainActivity extends AppCompatActivity  {
         } else showFragmentSeparatedMode(mNotePos);
     }
 
-/*
-    private void setFragmentPositionByOrientation() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
-            transaction.replace(R.id.note_container, EditFragment.newInstance(mNotePos));
-        else
-            transaction.replace(R.id.notes_list_fragment, EditFragment.newInstance(mNotePos));
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
-*/
-
     private void showFragmentCommonMode(int n) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.notes_list_fragment, NotesListFragment.newInstance());
         if (n != -1) {
-            if (fragmentManager.findFragmentById(R.id.note_container) != null && fragmentManager.findFragmentById(R.id.note_container).getClass().getSimpleName().equals("EditFragment"))
+            if (fragmentManager.findFragmentById(R.id.note_container) != null && fragmentManager.findFragmentById(R.id.note_container).getClass().equals(EditFragment.class))
                 transaction.replace(R.id.note_container, EditFragment.newInstance(n));
-            else if (fragmentManager.findFragmentById(R.id.notes_list_fragment) != null && fragmentManager.findFragmentById(R.id.notes_list_fragment).getClass().getSimpleName().equals("EditFragment"))
+            else if (fragmentManager.findFragmentById(R.id.notes_list_fragment) != null && fragmentManager.findFragmentById(R.id.notes_list_fragment).getClass().equals(EditFragment.class))
                 transaction.replace(R.id.note_container, EditFragment.newInstance(n));
             else transaction.replace(R.id.note_container, NoteFragment.newInstance(n));
             //           transaction.addToBackStack(null);
@@ -223,13 +160,20 @@ public class MainActivity extends AppCompatActivity  {
         toast.show();
     }
 
-
-
-/*
     @Override
-    public void onSendData(Note note) {
-        Note mEditableNote = note;
-//        getSupportFragmentManager().findFragmentById(R.id.);
+    public void onSaveData() {
+        try {
+            NotesListFragment fragment = (NotesListFragment) getSupportFragmentManager().findFragmentById(R.id.notes_list_fragment);
+            if (fragment.getClass().equals(NotesListFragment.class))
+                fragment.notifyAdapter();
+
+        } catch (ClassCastException e) {
+            return;
+        } finally {
+            mNotePos = -1;
+        }
+
     }
-*/
+
+
 }

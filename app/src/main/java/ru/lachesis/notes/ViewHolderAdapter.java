@@ -23,7 +23,7 @@ public class ViewHolderAdapter extends RecyclerView.Adapter<ViewHolderAdapter.Vi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.viewholder_notes_list,parent,false);
+        View view = mInflater.inflate(R.layout.viewholder_notes_list, parent, false);
         return new ViewHolder(view);
     }
 
@@ -36,7 +36,7 @@ public class ViewHolderAdapter extends RecyclerView.Adapter<ViewHolderAdapter.Vi
         mNoteList = mDataSource.getNoteData();
         mFragment = fragment;
         mInflater = fragment.getLayoutInflater();
-        setHasStableIds(true);
+//        setHasStableIds(true);
     }
 
     @Override
@@ -52,25 +52,25 @@ public class ViewHolderAdapter extends RecyclerView.Adapter<ViewHolderAdapter.Vi
         });
 
     }
+
     @Override
     public void onViewRecycled(@NonNull ViewHolder holder) {
         super.onViewRecycled(holder);
         holder.clear(mFragment);
     }
+
     @Override
     public int getItemCount() {
         return mNoteList.size();
     }
 
     public interface OnClickListener {
-        void onItemClick(View v,int position);
+        void onItemClick(View v, int position);
     }
 
     @Override
     public long getItemId(int position) {
         return mDataSource.getItemAt(position).getNoteId();
-//        return super.getItemId(position);
-
     }
 
 
@@ -78,6 +78,7 @@ public class ViewHolderAdapter extends RecyclerView.Adapter<ViewHolderAdapter.Vi
         private static final AtomicInteger COUNTER = new AtomicInteger();
         final int mNotePos;
         final TextView mNoteName, mNoteDate, mNoteText;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             mNotePos = COUNTER.incrementAndGet();
@@ -91,10 +92,8 @@ public class ViewHolderAdapter extends RecyclerView.Adapter<ViewHolderAdapter.Vi
             mNoteDate.setText(noteCard.getStringNoteDate());
             itemView.setOnLongClickListener((v) -> {
                 fragment.setLastSelectedPosition(getLayoutPosition());
-   //             MainActivity.mNotePos = getLayoutPosition();
                 return false;
             });
-//            itemView.setOnClickListener(v->fragment.setLastSelectedPosition(getLayoutPosition()));
             fragment.registerForContextMenu(itemView);
         }
 
