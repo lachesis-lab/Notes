@@ -1,5 +1,6 @@
 package ru.lachesis.notes;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,16 +15,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ViewHolderAdapter extends RecyclerView.Adapter<ViewHolderAdapter.ViewHolder> {
 
-    private final List<Note> mNoteList;
+    private List<Note> mNoteList;
     private final LayoutInflater mInflater;
-    private final NoteDataSource mDataSource;
+    private NoteDataSource mDataSource;
     private OnClickListener mOnClickListener;
     private NotesListFragment mFragment;
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.viewholder_notes_list, parent, false);
+        View view = mInflater.inflate(R.layout.viewholder_notes_list,parent,false);
         return new ViewHolder(view);
     }
 
@@ -31,20 +32,26 @@ public class ViewHolderAdapter extends RecyclerView.Adapter<ViewHolderAdapter.Vi
         mOnClickListener = onClickListener;
     }
 
-    public ViewHolderAdapter(NotesListFragment fragment, NoteDataSource dataSource) {
-        mDataSource = dataSource;
-        mNoteList = mDataSource.getNoteData();
+    public ViewHolderAdapter(NotesListFragment fragment) {
+  //      mDataSource = dataSource;
         mFragment = fragment;
         mInflater = fragment.getLayoutInflater();
-//        setHasStableIds(true);
+        setHasStableIds(true);
     }
+
+    public void setDataSource(NoteDataSource dataSource){
+        mDataSource = dataSource;
+        mNoteList = mDataSource.getNoteData();
+        this.notifyDataSetChanged();
+    }
+
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         Note noteCard = mDataSource.getItemAt(position);
         holder.populate(mFragment, noteCard);
-
+        Log.e("NOTES_COUNT1", String.valueOf(mNoteList.size()));
         holder.itemView.setOnClickListener((v) -> {
             if (mOnClickListener != null) {
                 mOnClickListener.onItemClick(v, position);
@@ -52,25 +59,26 @@ public class ViewHolderAdapter extends RecyclerView.Adapter<ViewHolderAdapter.Vi
         });
 
     }
-
     @Override
     public void onViewRecycled(@NonNull ViewHolder holder) {
         super.onViewRecycled(holder);
         holder.clear(mFragment);
-    }
 
+    }
     @Override
     public int getItemCount() {
         return mNoteList.size();
     }
 
     public interface OnClickListener {
-        void onItemClick(View v, int position);
+        void onItemClick(View v,int position);
     }
 
     @Override
     public long getItemId(int position) {
         return mDataSource.getItemAt(position).getNoteId();
+//        return super.getItemId(position);
+
     }
 
 
@@ -78,7 +86,6 @@ public class ViewHolderAdapter extends RecyclerView.Adapter<ViewHolderAdapter.Vi
         private static final AtomicInteger COUNTER = new AtomicInteger();
         final int mNotePos;
         final TextView mNoteName, mNoteDate, mNoteText;
-
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             mNotePos = COUNTER.incrementAndGet();

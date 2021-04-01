@@ -1,8 +1,8 @@
 package ru.lachesis.notes;
 
-import android.content.res.AssetManager;
 
 import org.json.JSONException;
+import android.content.res.AssetManager;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -19,10 +19,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-public class NoteDataSourceImpl implements NoteDataSource {
+public class NoteDataSourceImpl extends BaseNoteDataSourceImpl {
 
     //    private final Context mContext;
-    private final LinkedList<Note> mNotes = new LinkedList<>();
+//    private final LinkedList<Note> mNotes = new LinkedList<>();
     private volatile static NoteDataSourceImpl sInstance;
 
     public static NoteDataSourceImpl getInstance(AssetManager manager) {
@@ -48,56 +48,11 @@ public class NoteDataSourceImpl implements NoteDataSource {
         fillNoteData(manager);
     }
 
+
+/*
     @Override
     public List<Note> getNoteData() {
         return mNotes;
-    }
-
-    private void fillNoteData(AssetManager manager) {
-        try {
-//            AssetManager manager = Objects.requireNonNull(mContext.getAssets());
-            String assetPath = "Notes";
-            String[] files = manager.list(assetPath);
-            for (String file : files) {
-                String jsString = readJSONFromAsset(assetPath + "/" + file, manager);
-                if (jsString == null) continue;
-                JSONObject js = new JSONObject(jsString);
-                int noteId = js.getInt("noteId");
-                String noteName = js.getString("noteName");
-                DateFormat dateFormat = SimpleDateFormat.getDateTimeInstance();//new SimpleDateFormat();
-                //dateFormat.applyPattern("dd.mm.yyyy");
-                Date noteDate;
-                try {
-                    noteDate = dateFormat.parse(js.getString("noteDate"));
-                } catch (ParseException e) {
-                    noteDate = Calendar.getInstance(Locale.getDefault()).getTime();
-                }
-
-                String noteText = js.getString("noteText");
-
-                mNotes.add(new Note(noteId, noteName, noteDate, noteText));
-            }
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    private String readJSONFromAsset(String filename, AssetManager manager) {
-        String json;
-        try {
-            InputStream is = manager.open(filename);
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-            json = new String(buffer);
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        return json;
     }
 
 
@@ -146,4 +101,63 @@ public class NoteDataSourceImpl implements NoteDataSource {
             return Collections.max(ids) + 1;
         }
     }
+
+    @Override
+    public void update(Note note) {
+        for (int i =0; i< mNotes.size(); i++){
+            if (mNotes.get(i).getNoteId()==note.getNoteId()) {
+                mNotes.add(i, note);
+                return;
+            }
+        }
+    }
+
+*/
+    private void fillNoteData(AssetManager manager) {
+        try {
+//            AssetManager manager = Objects.requireNonNull(mContext.getAssets());
+            String assetPath = "Notes";
+            String[] files = manager.list(assetPath);
+            for (String file : files) {
+                String jsString = readJSONFromAsset(assetPath + "/" + file, manager);
+                if (jsString == null) continue;
+                JSONObject js = new JSONObject(jsString);
+                int noteId = js.getInt("noteId");
+                String noteName = js.getString("noteName");
+                DateFormat dateFormat = SimpleDateFormat.getDateTimeInstance();//new SimpleDateFormat();
+                //dateFormat.applyPattern("dd.mm.yyyy");
+                Date noteDate;
+                try {
+                    noteDate = dateFormat.parse(js.getString("noteDate"));
+                } catch (ParseException e) {
+                    noteDate = Calendar.getInstance(Locale.getDefault()).getTime();
+                }
+
+                String noteText = js.getString("noteText");
+
+                mNotes.add(new Note(noteId, noteName, noteDate, noteText));
+            }
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private String readJSONFromAsset(String filename, AssetManager manager) {
+        String json;
+        try {
+            InputStream is = manager.open(filename);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer);
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
+    }
+
 }

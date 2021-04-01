@@ -2,6 +2,7 @@ package ru.lachesis.notes;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 
@@ -40,6 +41,35 @@ public class NotesListFragment extends Fragment  {
     private ViewHolderAdapter mViewHolderAdapter;
     private int mLastSelectedPosition = -1;
 
+    private NoteDataSource.NoteDataSourceListener mListener = new NoteDataSource.NoteDataSourceListener() {
+        public void onItemAdded(int idx) {
+            if (mViewHolderAdapter != null) {
+                mViewHolderAdapter.notifyItemInserted(idx);
+            }
+        }
+
+        @Override
+        public void onItemRemoved(int idx) {
+            if (mViewHolderAdapter != null) {
+                mViewHolderAdapter.notifyItemRemoved(idx);
+            }
+        }
+
+        @Override
+        public void onItemUpdated(int idx) {
+            if (mViewHolderAdapter != null) {
+                mViewHolderAdapter.notifyItemChanged(idx);
+            }
+        }
+
+        @Override
+        public void onDataSetChanged() {
+            if (mViewHolderAdapter != null) {
+                mViewHolderAdapter.notifyDataSetChanged();
+            }
+        }
+    };
+
     public NotesListFragment() {
         // Required empty public constructor
     }
@@ -75,13 +105,11 @@ public class NotesListFragment extends Fragment  {
 
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity());
-        mRecyclerView.setLayoutManager(layoutManager);
 
-        mDataSource = NoteDataSourceImpl.getInstance(requireActivity().getAssets());
-        mNotesList = mDataSource.getNoteData();
-
-        mViewHolderAdapter = new ViewHolderAdapter(this,
-                NoteDataSourceImpl.getInstance(requireActivity().getAssets()));
+//        mDataSource = NoteDataSourceImpl.getInstance(requireActivity().getAssets());
+//        mNotesList = mDataSource.getNoteData();
+        mViewHolderAdapter = new ViewHolderAdapter(this);
+//                NoteDataSourceImpl.getInstance(requireActivity().getAssets()));
         mViewHolderAdapter.setOnClickListener((v, position) -> {
             MainActivity.mNotePos = position;
             mLastSelectedPosition =position;
@@ -90,10 +118,28 @@ public class NotesListFragment extends Fragment  {
             } else showFragmentCommonMode(position);
 
         });
+//        mNotesList = mDataSource.getNoteData(dataSource -> mViewHolderAdapter.notifyDataSetChanged());
 
+        mDataSource = NoteDataSourceFBImpl.getInstance(new NoteDataSource.NoteDataSourceResponse() {
+            @Override
+            public void initialized(NoteDataSource dataSource) {
+                mNotesList = mDataSource.getNoteData();
+                mViewHolderAdapter.notifyDataSetChanged();
+            }
+        });
+        mDataSource.addNoteDataSourceListener(mListener);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mViewHolderAdapter.setDataSource(mDataSource);
         mRecyclerView.setAdapter(mViewHolderAdapter);
         return mRecyclerView;
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mDataSource.removeNoteDataSourceListener(mListener);
+    }
+
 
     private void showFragmentCommonMode(int n) {
         FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();

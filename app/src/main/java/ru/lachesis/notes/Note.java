@@ -9,7 +9,17 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Note implements Parcelable {
+    private String mFNoteId;
     private int mNoteId;
+
+    public String getFNoteId() {
+        return mFNoteId;
+    }
+
+    public void setFNoteId(String fNoteId) {
+        mFNoteId = fNoteId;
+    }
+
     private String mNoteName;
     private Date mNoteDate;
     private String mNoteText;

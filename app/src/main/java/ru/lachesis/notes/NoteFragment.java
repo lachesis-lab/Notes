@@ -60,7 +60,8 @@ public class NoteFragment extends Fragment  {
             requireActivity().finish();
             return;
         }
-        NoteDataSource dataSource = NoteDataSourceImpl.getInstance(requireActivity().getAssets());
+//        NoteDataSource dataSource = NoteDataSourceImpl.getInstance(requireActivity().getAssets());
+        NoteDataSource dataSource = NoteDataSourceFBImpl.getInstance(null);
         Note currentNote = dataSource.getItemAt(MainActivity.mNotePos);
 
         TextView tvNoteText = view.findViewById(R.id.note_text);

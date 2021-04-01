@@ -101,7 +101,8 @@ public class EditFragment extends Fragment {
         // Inflate the layout for this fragment
         ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_edit, container, false);
 
-        mDataSource = NoteDataSourceImpl.getInstance(requireActivity().getAssets());
+//        mDataSource = NoteDataSourceImpl.getInstance(requireActivity().getAssets());
+        mDataSource = NoteDataSourceFBImpl.getInstance(null);
         mCurrentNote = mDataSource.getItemAt(mNotePos);
         if (mEditableNote == null || mEditableNote.getNoteId() != mCurrentNote.getNoteId())
             mEditableNote = new Note(mCurrentNote);
@@ -178,6 +179,7 @@ public class EditFragment extends Fragment {
                 mCurrentNote.setNoteName(mNameEdit.getText().toString());
                 mCurrentNote.setNoteText(mTextEdit.getText().toString());
                 mCurrentNote.setNoteDate(date);
+                mDataSource.update(mCurrentNote);
                 saveDataListener.onSaveData();
                 FragmentManager fm = requireActivity().getSupportFragmentManager();
                 while (fm.getBackStackEntryCount() > 0) {
