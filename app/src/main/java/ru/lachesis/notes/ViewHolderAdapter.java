@@ -4,6 +4,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,12 +20,13 @@ public class ViewHolderAdapter extends RecyclerView.Adapter<ViewHolderAdapter.Vi
     private final LayoutInflater mInflater;
     private NoteDataSource mDataSource;
     private OnClickListener mOnClickListener;
-    private NotesListFragment mFragment;
+    private final NotesListFragment mFragment;
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.viewholder_notes_list,parent,false);
+        Log.e("CREATE_VH_NOTES",String.valueOf(mNoteList.size()));
         return new ViewHolder(view);
     }
 
@@ -38,6 +40,12 @@ public class ViewHolderAdapter extends RecyclerView.Adapter<ViewHolderAdapter.Vi
         mInflater = fragment.getLayoutInflater();
         setHasStableIds(true);
     }
+    public void updateList(List<Note> list) {
+        mNoteList = list;
+        this.notifyDataSetChanged();
+        Log.e("UPDATE_NOTES",String.valueOf(mNoteList.size()));
+    }
+
 
     public void setDataSource(NoteDataSource dataSource){
         mDataSource = dataSource;
@@ -108,6 +116,7 @@ public class ViewHolderAdapter extends RecyclerView.Adapter<ViewHolderAdapter.Vi
             itemView.setOnLongClickListener(null);
             fragment.unregisterForContextMenu(itemView);
         }
+
     }
 
 }

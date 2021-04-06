@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "420116433494",
-    "project_id": "notes-78704",
-    "storage_bucket": "notes-78704.appspot.com"
+    "project_number": "755753854469",
+    "project_id": "notes-303f8",
+    "storage_bucket": "notes-303f8.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:420116433494:android:86fbc1c153a9b831d689f7",
+        "mobilesdk_app_id": "1:755753854469:android:3fcb968b374e2d949e1e6c",
         "android_client_info": {
           "package_name": "ru.lachesis.notes"
         }
       },
       "oauth_client": [
         {
-          "client_id": "420116433494-407o8mo7tf6kb2bl1c5dk48d03q0glid.apps.googleusercontent.com",
+          "client_id": "755753854469-rul11a2acgkdtutuq485o0uj1loncvvl.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyD2kPFH8i3vGfR_jcCffdI3Vhyv3907cuw"
+          "current_key": "AIzaSyBHhVQHe2-K91WjngqcnlhmyY09_-4Qmck"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "420116433494-407o8mo7tf6kb2bl1c5dk48d03q0glid.apps.googleusercontent.com",
+              "client_id": "755753854469-rul11a2acgkdtutuq485o0uj1loncvvl.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

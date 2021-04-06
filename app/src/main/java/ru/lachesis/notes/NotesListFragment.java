@@ -86,6 +86,7 @@ public class NotesListFragment extends Fragment  {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setHasOptionsMenu(true);
     }
 
@@ -104,7 +105,6 @@ public class NotesListFragment extends Fragment  {
         mRecyclerView.addItemDecoration(decorator);
 
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity());
 
 //        mDataSource = NoteDataSourceImpl.getInstance(requireActivity().getAssets());
 //        mNotesList = mDataSource.getNoteData();
@@ -112,7 +112,7 @@ public class NotesListFragment extends Fragment  {
 //                NoteDataSourceImpl.getInstance(requireActivity().getAssets()));
         mViewHolderAdapter.setOnClickListener((v, position) -> {
             MainActivity.mNotePos = position;
-            mLastSelectedPosition =position;
+            mLastSelectedPosition = position;
             if (Configuration.ORIENTATION_PORTRAIT == getResources().getConfiguration().orientation) {
                 showFragmentSeparatedMode(position);
             } else showFragmentCommonMode(position);
@@ -120,17 +120,32 @@ public class NotesListFragment extends Fragment  {
         });
 //        mNotesList = mDataSource.getNoteData(dataSource -> mViewHolderAdapter.notifyDataSetChanged());
 
+        LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity());
         mDataSource = NoteDataSourceFBImpl.getInstance(new NoteDataSource.NoteDataSourceResponse() {
             @Override
             public void initialized(NoteDataSource dataSource) {
+                mNotesList.clear();
                 mNotesList = mDataSource.getNoteData();
+                Log.e("INIT_COUNT_NOTES0",String.valueOf(mViewHolderAdapter.getItemCount()));
+                mViewHolderAdapter.updateList(mNotesList);
+                Log.e("observ_NOTES",String.valueOf(mViewHolderAdapter.hasObservers()));
+//                mViewHolderAdapter.setDataSource(mDataSource);
+//                mRecyclerView.setLayoutManager(layoutManager);
+//                mRecyclerView.setAdapter(mViewHolderAdapter);
                 mViewHolderAdapter.notifyDataSetChanged();
+                mDataSource.addNoteDataSourceListener(mListener);
             }
         });
-        mDataSource.addNoteDataSourceListener(mListener);
-        mRecyclerView.setLayoutManager(layoutManager);
+//        mNotesList = mDataSource.getNoteData();
+//        mNotesList.clear();
+//        mNotesList = mDataSource.getNoteData();
+//        mDataSource.addNoteDataSourceListener(mListener);
+//        mRecyclerView.setLayoutManager(layoutManager);
+//        mViewHolderAdapter.updateList(mNotesList);
+        mViewHolderAdapter.notifyDataSetChanged();
         mViewHolderAdapter.setDataSource(mDataSource);
         mRecyclerView.setAdapter(mViewHolderAdapter);
+        mRecyclerView.setLayoutManager(layoutManager);
         return mRecyclerView;
     }
 

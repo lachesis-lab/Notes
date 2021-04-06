@@ -1,5 +1,7 @@
 package ru.lachesis.notes;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -7,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public abstract class BaseNoteDataSourceImpl implements NoteDataSource {
-    protected final LinkedList<Note> mNotes = new LinkedList<>();
+    protected LinkedList<Note> mNotes = new LinkedList<>();
     private HashSet<NoteDataSourceListener> mListeners = new HashSet<>();
 
     public void addNoteDataSourceListener(NoteDataSourceListener listener){
@@ -96,6 +98,7 @@ public abstract class BaseNoteDataSourceImpl implements NoteDataSource {
 
     protected final void notifyDataSetChanged() {
         for (NoteDataSourceListener listener : mListeners) {
+            Log.e("NOTIFY1_NOTES","onDataSetChanged");
             listener.onDataSetChanged();
         }
     }

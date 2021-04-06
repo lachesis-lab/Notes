@@ -24,6 +24,8 @@ public class Note implements Parcelable {
     private Date mNoteDate;
     private String mNoteText;
 
+    public Note () { }
+
     public Note(String noteName, Date noteDate, String noteText) {
         mNoteName = noteName;
         mNoteDate = noteDate;

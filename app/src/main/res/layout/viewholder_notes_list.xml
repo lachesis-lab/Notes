@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="5dp"
     android:layout_marginBottom="5dp"
@@ -11,14 +11,14 @@
     <TextView
         android:id="@+id/note_date"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="10"
         android:textSize="@dimen/note_date_textSize"
         />
     <TextView
         android:id="@+id/note_name"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="20"
         android:textSize="@dimen/note_name_textSize"
         />
