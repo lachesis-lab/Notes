@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">Notes</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="drawer_header_text">Дополнительно</string>
+    <string name="navigation_drawer_open">Открыть навигационное меню</string>
+    <string name="navigation_drawer_close">Закрыть навигационное меню</string>
+    <string name="drawer_item_settings_text">Настройки</string>
+    <string name="drawer_item_save_text">Сохранение</string>
+    <string name="actionbar_item_search_text">Поиск</string>
+    <string name="actionbar_item_share_text">Поделиться</string>
+    <string name="actionbar_item_add_text">Добавить заметку</string>
+    <string name="actionbar_item_about_text">О программе</string>
+    <string name="actionbar_item_edit_text">Редактировать заметку</string>
+    <string name="edit_save_button_text">Сохранить</string>
+
 </resources>
